@@ -9,10 +9,35 @@ let tilesClicked = 0;
 
 let gameOver = false;
 
+let confirmCheck = false;
+
 window.onload = function() {
     // promptAmountOfMines();
     minesCount = localStorage.getItem("stakeMinesRipoffMineAmmount") || 1;
     minesCount = parseInt(minesCount);
+    minesCount = localStorage.getItem("stakeMinesRipoffMineAmmount") || 1;
+    minesCount = parseInt(minesCount);
+    document.getElementById("mines-count").innerText = minesCount;
+    document.getElementById("set-mines-count").innerText = localStorage.getItem("stakeMinesRipoffMineAmmount") || 1;
+    document.getElementById("cash-out-button").addEventListener("click", cashOut);
+    document.getElementById("restart-button").addEventListener("click", function() {
+        if (!confirmCheck) {
+            confirmCheck = true;
+            if (confirm("Are you sure you want to restart?")) {
+                reloadGame();
+            }
+            confirmCheck = false;
+        }
+    });
+    document.getElementById("set-mines-count-button").addEventListener("click", SetMinesCount);
+    window.onkeydown = function(event) {
+        if (event.key == "r") {
+            reloadGame();
+        }
+        if (event.key == "e") {
+            cashOut();
+        }
+    }
     startGame();
 }
 
@@ -69,21 +94,6 @@ function reloadGame() {
 }
 
 function startGame() {
-    minesCount = localStorage.getItem("stakeMinesRipoffMineAmmount") || 1;
-    minesCount = parseInt(minesCount);
-    document.getElementById("mines-count").innerText = minesCount;
-    document.getElementById("set-mines-count").innerText = localStorage.getItem("stakeMinesRipoffMineAmmount") || 1;
-    document.getElementById("cash-out-button").addEventListener("click", cashOut);
-    document.getElementById("set-mines-count-button").addEventListener("click", SetMinesCount);
-    window.onkeydown = function(event) {
-        if (event.key == "r") {
-            reloadGame();
-        }
-        if (event.key == "e") {
-            cashOut();
-        }
-    }
-    
     setMines();
 
     //populate our board
@@ -101,6 +111,7 @@ function startGame() {
     }
 
     console.log(board);
+    console.log(minesLocation);
 }
 
 function clearBoard() {
