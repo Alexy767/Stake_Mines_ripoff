@@ -9,30 +9,40 @@ let tilesClicked = 0;
 
 let gameOver = false;
 
+let multiplier = 0;
+
 let confirmCheck = false;
 
 window.onload = function() {
     // promptAmountOfMines();
-    minesCount = localStorage.getItem("stakeMinesRipoffMineAmmount") || 1;
-    minesCount = parseInt(minesCount);
-    minesCount = localStorage.getItem("stakeMinesRipoffMineAmmount") || 1;
-    minesCount = parseInt(minesCount);
-    document.getElementById("mines-count").innerText = minesCount;
-    document.getElementById("set-mines-count").innerText = localStorage.getItem("stakeMinesRipoffMineAmmount") || 1;
     document.getElementById("cash-out-button").addEventListener("click", cashOut);
     document.getElementById("restart-button").addEventListener("click", function() {
         if (!confirmCheck) {
             confirmCheck = true;
-            if (confirm("Are you sure you want to restart?")) {
-                reloadGame();
+            if (!gameOver) {
+                if (!confirm("Are you sure you want to restart?")) {
+                    confirmCheck = false;
+                    return;
+                }
             }
+            reloadGame();
             confirmCheck = false;
         }
     });
     document.getElementById("set-mines-count-button").addEventListener("click", SetMinesCount);
     window.onkeydown = function(event) {
         if (event.key == "r") {
-            reloadGame();
+            if (!confirmCheck) {
+                confirmCheck = true;
+                if (!gameOver) {
+                    if (!confirm("Are you sure you want to restart?")) {
+                        confirmCheck = false;
+                        return;
+                    }
+                }
+                reloadGame();
+                confirmCheck = false;
+            }
         }
         if (event.key == "e") {
             cashOut();
@@ -49,7 +59,7 @@ window.onload = function() {
 //         alert("Default at 1 mine will be used.");
 //         return;
 //     } else {
-//         alert("The ammount you put in is either invalid or bigger that 10. Please enter a number between 1 and 10.");
+//         alert("The amount you put in is either invalid or bigger that 10. Please enter a number between 1 and 10.");
 //         promptAmountOfMines();
 //     }
 // }
@@ -57,12 +67,12 @@ window.onload = function() {
 function SetMinesCount() {
     let mines = prompt("How many mines do you want to play with? (1-10)");
     if (mines >= 1 && mines <= 10) {
-        localStorage.setItem("stakeMinesRipoffMineAmmount", mines);
-        document.getElementById("set-mines-count").innerText = localStorage.getItem("stakeMinesRipoffMineAmmount") || 1;
+        localStorage.setItem("StakeMinesRipoffMineAmount", parseInt(mines));
+        document.getElementById("set-mines-count").innerText = localStorage.getItem("StakeMinesRipoffMineAmount") || 1;
     } else if (mines == null) {
         return;
     } else {
-        alert("The ammount you put in is either invalid or bigger that 10. Please enter a number between 1 and 10.");
+        alert("The amount you put in is either invalid or bigger that 10. Please enter a number between 1 and 10.");
         SetMinesCount();
     }
 }
@@ -94,6 +104,13 @@ function reloadGame() {
 }
 
 function startGame() {
+    minesCount = localStorage.getItem("StakeMinesRipoffMineAmount") || 1;
+    minesCount = parseInt(minesCount);
+    minesCount = localStorage.getItem("StakeMinesRipoffMineAmount") || 1;
+    minesCount = parseInt(minesCount);
+    document.getElementById("mines-count").innerText = minesCount;
+    document.getElementById("set-mines-count").innerText = localStorage.getItem("StakeMinesRipoffMineAmount") || 1;
+
     setMines();
 
     //populate our board
@@ -122,17 +139,18 @@ function clearBoard() {
     board = [];
     minesLocation = [];
     tilesClicked = 0;
+    multiplier = 0;
 }
 
 function cashOut() {
     if (!gameOver) {
         if (minesCount >= 5) {
-            multiplier = Math.round((tilesClicked * 0.2) * (minesCount / 4));
+            multiplier = Math.round((tilesClicked * 0.2) * (minesCount / 4) * 10) / 10;
         } else {
-            multiplier = Math.round((tilesClicked * 0.2));
+            multiplier = Math.round((tilesClicked * 0.2) * 10) / 10 + 1;
         }
         alert("You have cashed out! You have cleared " + tilesClicked + " tiles for a multiplier of " + multiplier + "!");
-        document.getElementById("mines-count").innerText = "Cashed Out";
+        document.getElementById("mines-count").innerHTML = "Cashed Out<br/>" + multiplier + "x";
         revealMinesSafe();
         gameOver = true;
     }
@@ -200,7 +218,7 @@ function checkMine(r, c) {
 
     if (tilesClicked == rows * columns - minesCount) {
         cashOut();
-        document.getElementById("mines-count").innerText = "Full Clear";
+        document.getElementById("mines-count").innerHTML = "Full Clear<br/>" + multiplier + "x";
     }
 }
 
