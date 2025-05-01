@@ -72,7 +72,7 @@ function SetMinesCount() {
     } else if (mines == null) {
         return;
     } else {
-        alert("The amount you put in is either invalid or bigger that 10. Please enter a number between 1 and 10.");
+        alert("The amount you put in is either invalid or bigger than 10. Please enter a number between 1 and 10.");
         SetMinesCount();
     }
 }
@@ -145,7 +145,7 @@ function clearBoard() {
 function cashOut() {
     if (!gameOver) {
         if (minesCount >= 5) {
-            multiplier = Math.round((tilesClicked * 0.2) * (minesCount / 4) * 10) / 10;
+            multiplier = Math.round((tilesClicked * 0.2) * (minesCount / 4) * 10) / 10 + 1;
         } else {
             multiplier = Math.round((tilesClicked * 0.2) * 10) / 10 + 1;
         }
