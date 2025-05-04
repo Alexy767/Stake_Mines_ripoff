@@ -31,7 +31,7 @@ window.onload = function() {
     });
     document.getElementById("set-mines-count-button").addEventListener("click", SetMinesCount);
     window.onkeydown = function(event) {
-        if (event.key == "r") {
+        if (event.key == "r" && !event.ctrlKey) {
             if (!confirmCheck) {
                 confirmCheck = true;
                 if (!gameOver) {
